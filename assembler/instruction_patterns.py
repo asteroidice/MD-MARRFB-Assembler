@@ -12,8 +12,8 @@ optcode:
     This is the optcode for the command.
 Instruction Parser:
     This is a function that accepts a string of the assembly instruction and
-    returns the machine code for that instruction. 
+    returns the machine code for that instruction.
 """
 INSTRUCTION_PATTERNS = [
-    ('**add**', 0x0C, parseAdd)
+    ('add', parseAdd)
 ]

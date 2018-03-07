@@ -1,4 +1,4 @@
-import sys, re
+import sys, re, code
 
 from assembler.instruction_patterns import INSTRUCTION_PATTERNS
 
@@ -33,9 +33,10 @@ class Parser():
 
     def __parseLine(self, instruction):
         for pattern in INSTRUCTION_PATTERNS:
+            # code.interact(local=locals())
             regex = re.compile(pattern[0])
             if regex.match(instruction):
-                return pattern[2](instruction)
+                return pattern[1](instruction)
 
     def saveFile(self, outputfile):
         pass
