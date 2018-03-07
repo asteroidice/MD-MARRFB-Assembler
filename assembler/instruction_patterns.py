@@ -1,4 +1,4 @@
-from assembler.instruction_parsers import parseAdd
+from assembler.instruction_parsers import parseAdd, parseLoadImmediate, parseStoreWord
 
 """
 Instruction Patterns are an array of tuples. Whose values are the following.

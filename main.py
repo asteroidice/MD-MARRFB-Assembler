@@ -1,4 +1,4 @@
-import sys, getopt
+import sys, getopt, code
 
 from assembler.parser import Parser
 
@@ -28,8 +28,9 @@ def main(argv):
       print_help_and_exit()
 
    parser = Parser(inputfile)
-   parser.parse()
+   parser.assemble()
    parser.saveFile(outputfile)
+   code.interact(local=locals())
 
 
 
