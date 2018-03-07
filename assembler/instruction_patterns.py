@@ -15,5 +15,7 @@ Instruction Parser:
     returns the machine code for that instruction.
 """
 INSTRUCTION_PATTERNS = [
-    ('add', parseAdd)
+    ('add', parseAdd),
+    ('li', parseLoadImmediate),
+    ('sw', parseStoreWord),
 ]
