@@ -65,9 +65,8 @@ class Parser():
             line = instruction_tuple[0]
             try:
                 assembled = self.__parseLine(instruction_tuple, index)
-                if assembled == None or assembled == "":
-                    # TODO: raise SyntaxError here
-                    continue
+                if not assembled:
+                    raise SyntaxError("Unable to parse the above line.")
                 self.mntdw_lines.append(assembled)
 
             except SyntaxError as error:
@@ -85,8 +84,13 @@ class Parser():
             regex = re.compile(pattern[0])
             if regex.match(instruction):
                 instruction_params = re.sub(regex, '', instruction)
+                if instruction_params:
+                    instruction_params = instruction_params.split(',')
+                else:
+                    instruction_params = []
+                    
                 return pattern[1]({
-                    'params': instruction_params.split(','),
+                    'params': instruction_params,
                     'address': address,
                     'line': instruction_tuple[1],
                     'complete_instruction': instruction,

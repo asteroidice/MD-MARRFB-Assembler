@@ -2,6 +2,7 @@ import copy
 
 from assembler.error import SyntaxError
 from assembler.registers import REGISTERS
+from assembler.helpers import check_params
 
 def parseAdd(instruction):
     if not len(instruction['params']) == 3:
@@ -9,7 +10,7 @@ def parseAdd(instruction):
     p0 = instruction['params'][0]
     p1 = instruction['params'][1]
     p2 = instruction['params'][2]
-    if not p0 in REGISTERS or p1 in REGISTERS or not p2 in REGISTERS:
+    if not p0 in REGISTERS or not p1 in REGISTERS or not p2 in REGISTERS:
         raise SyntaxError("Invalid register")
 
     r0 = REGISTERS[p0]
@@ -51,10 +52,28 @@ def parseAddImmediate(instruction):
 
 
 def parseBoothAdd(instruction):
-    pass
+    check_params(instruction, ())
+
+    return(format(0x09, '032b'))
 
 def parseBoothLoad(instruction):
-    pass
+    check_params(instruction, ("register", "register"))
+
+    a_param = instruction['params'][0]
+    b_param = instruction['params'][1]
+
+    a_reg = REGISTERS[a_param]
+    b_reg = REGISTERS[b_param]
+
+    opcode = "000000"
+    func_code = format(0x04, '06b')
+    source_reg = format(a_reg, '05b')
+    target_reg = format(b_reg, '05b')
+    shift = "00000"
+    dest_reg = "00000"
+
+    return(opcode + source_reg + target_reg + dest_reg + shift + func_code)
+
 
 def parseShiftRightArithmetic(instruction):
     if not len(instruction['params']) == 3:
@@ -133,7 +152,21 @@ def parseBranchNotEqual(instruction):
 
 
 def parseMove(instruction):
-    pass
+    # move $1, $2 -> add $1, $2, $0
+    check_params(instruction, ("register", "register"))
+    # if not len(instruction['params']) == 2:
+    #     raise SyntaxError("Two Parameters expected")
+    # p0 = instruction['params'][0]
+    # p1 = instruction['params'][1]
+    # if not p0 in REGISTERS or not p1 in REGISTERS:
+    #     raise SyntaxError("Invalid register symbol.")
+
+    params = instruction['params']
+    instruction_copy = copy.copy(instruction)
+    instruction['params'] = [params[0], params[1], '$zero']
+    return parseAdd(instruction)
 
 def parseSyscall(instruction):
-    pass
+    check_params(instruction, ())
+
+    return(format(0xC, "032b"))
