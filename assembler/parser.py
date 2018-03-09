@@ -82,5 +82,6 @@ class Parser():
                     'address': address,
                     'line': instruction_tuple[1],
                     'complete_instruction': instruction,
+                    'labels': self.labels,
                 })
         raise SyntaxError

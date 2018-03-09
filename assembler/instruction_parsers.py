@@ -62,7 +62,7 @@ def parseShiftRightArithmetic(instruction):
     p0 = instruction['params'][0]
     p1 = instruction['params'][1]
     p2 = instruction['params'][2]
-    if not p0 in REGISTERS or p1 in REGISTERS:
+    if not p0 in REGISTERS or not p1 in REGISTERS:
         raise SyntaxError("Invalid register symbol.")
     # TODO: Check to make sure number is not out of range.
     r0 = REGISTERS[p0]
@@ -89,7 +89,7 @@ def parseSetOnLessThanImmediate(instruction):
     p0 = instruction['params'][0]
     p1 = instruction['params'][1]
     p2 = instruction['params'][2]
-    if not p0 in REGISTERS or p1 in REGISTERS:
+    if not p0 in REGISTERS or not p1 in REGISTERS:
         raise SyntaxError("Invalid register symbol.")
     # TODO: Check to make sure number is not out of range.
     r0 = REGISTERS[p0]
@@ -108,7 +108,30 @@ def parseSetOnLessThanImmediate(instruction):
 
 
 def parseBranchNotEqual(instruction):
-    pass
+    print(instruction)
+    #bne $a0, $zero, start
+    if not len(instruction['params']) == 3:
+        raise SyntaxError("Three Parameters expected")
+    p0 = instruction['params'][0]
+    p1 = instruction['params'][1]
+    p2 = instruction['params'][2]
+    if not p0 in REGISTERS or not p1 in REGISTERS:
+        raise SyntaxError("Invalid register symbol.")
+    if not p2 in instruction['labels']:
+        raise SyntaxError("Could not find label '" +  str(p2) + "'.")
+
+    r0 = REGISTERS[p0]
+    r1 = REGISTERS[p1]
+
+    label_addr = instruction['labels'][p2]
+
+    opcode = format(0x05, '06b')
+    target_reg = format(r0, '05b')
+    source_reg = format(r1, '05b')
+    IMM = format(label_addr, '016b') # TODO: Implement indirect addressing.
+
+    return(opcode + source_reg + target_reg + IMM)
+
 
 def parseMove(instruction):
     pass
