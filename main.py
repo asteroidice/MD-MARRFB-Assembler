@@ -30,8 +30,8 @@ def main(argv):
    parser = Parser(inputfile)
    parser.assemble()
    parser.saveFile(outputfile)
-   print(parser.instruction_lines)
-   code.interact(local=locals())
+   print(parser.mntdw_lines)
+   # code.interact(local=locals())
 
 
 

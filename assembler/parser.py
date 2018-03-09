@@ -56,22 +56,31 @@ class Parser():
         for index, instruction_tuple in enumerate(self.instruction_lines):
             line = instruction_tuple[0]
             try:
-                assembled = self.__parseLine(line)
+                assembled = self.__parseLine(instruction_tuple, index)
                 if assembled == None or assembled == "":
                     # TODO: raise SyntaxError here
                     continue
                 self.mntdw_lines.append(assembled)
 
-            except SyntaxError:
+            except SyntaxError as error:
                 print("Syntax Error on line " + str(instruction_tuple[1] + 1) + " (Snippet shown below)")
                 print(self.input_lines[instruction_tuple[1]])
+                if len(error.args) > 0:
+                    print(error)
                 sys.exit(0)
 
 
-    def __parseLine(self, instruction):
+    def __parseLine(self, instruction_tuple, address):
+        instruction = instruction_tuple[0]
         for pattern in INSTRUCTION_PATTERNS:
             # code.interact(local=locals())
             regex = re.compile(pattern[0])
             if regex.match(instruction):
-                return pattern[1](instruction)
+                instruction_params = re.sub(regex, '', instruction)
+                return pattern[1]({
+                    'params': instruction_params,
+                    'address': address,
+                    'line': instruction_tuple[1],
+                    'complete_instruction': instruction,
+                })
         raise SyntaxError
