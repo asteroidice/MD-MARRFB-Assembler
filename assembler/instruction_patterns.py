@@ -1,6 +1,6 @@
 from assembler.instruction_parsers import (parseAddImmediate, parseAdd,
     parseLoadImmediate, parseBoothLoad, parseBoothAdd,
-    parseShiftRightArithmetic, parseShiftLogicalLeft, parseBranchNotEqual,
+    parseShiftRightArithmetic, parseSetOnLessThan, parseBranchNotEqual,
     parseMove, parseSyscall)
 """
 Instruction Patterns are an array of tuples. Whose values are the following.
@@ -23,7 +23,7 @@ INSTRUCTION_PATTERNS = [
     ('booth-load', parseBoothLoad),
     ('booth-add', parseBoothAdd),
     ('sra', parseShiftRightArithmetic),
-    ('slt', parseShiftLogicalLeft),
+    ('slt', parseSetOnLessThan),
     ('bne', parseBranchNotEqual),
     ('move', parseMove),
     ('syscall', parseSyscall),

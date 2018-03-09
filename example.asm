@@ -1,5 +1,6 @@
   # setup initial values
 	li $t0, 0
+	addi $t0, $t0, 6
 
 	# Multiply A ($t1) and B ($t2)
 	li $t1, 4

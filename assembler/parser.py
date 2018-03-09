@@ -78,7 +78,7 @@ class Parser():
             if regex.match(instruction):
                 instruction_params = re.sub(regex, '', instruction)
                 return pattern[1]({
-                    'params': instruction_params,
+                    'params': instruction_params.split(','),
                     'address': address,
                     'line': instruction_tuple[1],
                     'complete_instruction': instruction,
