@@ -34,7 +34,6 @@ def parseLoadImmediate(instruction):
 
 
 def parseAddImmediate(instruction):
-    # $b0, $b0, 2
     parts = instruction['params']
     if not len(parts) == 3:
         raise SyntaxError("Three parameters expected. " + str(len(parts)) + " found.")
@@ -83,9 +82,30 @@ def parseShiftRightArithmetic(instruction):
     return(opcode + source_reg + target_reg + dest_reg + shift + func_code)
 
 
+def parseSetOnLessThanImmediate(instruction):
+    # slti $a0, $t4, 16
+    if not len(instruction['params']) == 3:
+        raise SyntaxError("Three parameters expected.")
+    p0 = instruction['params'][0]
+    p1 = instruction['params'][1]
+    p2 = instruction['params'][2]
+    if not p0 in REGISTERS or p1 in REGISTERS:
+        raise SyntaxError("Invalid register symbol.")
+    # TODO: Check to make sure number is not out of range.
+    r0 = REGISTERS[p0]
+    r1 = REGISTERS[p1]
+    try:
+        s = int(p2)
+    except:
+        raise SyntaxError("Invalid integer '" + str(p2) + "'.")
 
-def parseSetOnLessThan(instruction):
-    pass
+    opcode = format(0x0A, '06b')
+    reg_target = format(r0, '05b')
+    reg_source = format(r1, '05b')
+    IMM = format(s, '016b')
+
+    return(opcode + reg_source + reg_target + IMM)
+
 
 def parseBranchNotEqual(instruction):
     pass

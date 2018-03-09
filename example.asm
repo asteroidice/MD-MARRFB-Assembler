@@ -16,8 +16,7 @@ start:
 
 	# keep track of the shifts. (This is some do while logic.)
 	addi $t0, $t0, 1		# Increment the counter
-	li $t6, 16					# load a constant into a register
-	slt $a0, $t4, $t6		# set on less than (i < 7)
+	slti $a0, $t4, 16		# set if $t4 is less than 16
 	bne $a0, $zero, start	# If i = 7 then continue with the rest of the program.
 
 
