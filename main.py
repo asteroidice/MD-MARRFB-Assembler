@@ -1,3 +1,5 @@
+#!/usr/local/bin/python2
+
 import sys, getopt, code
 
 from assembler.parser import Parser
@@ -30,7 +32,7 @@ def main(argv):
    parser = Parser(inputfile)
    parser.assemble()
    parser.saveFile(outputfile)
-   print(parser.mntdw_lines)
+   # print(parser.mntdw_lines)
    # code.interact(local=locals())
 
 

@@ -1,4 +1,4 @@
-import sys, re, code
+import sys, re, code, os
 
 from assembler.instruction_patterns import INSTRUCTION_PATTERNS
 from assembler.error import SyntaxError
@@ -22,6 +22,7 @@ class Parser():
     def __init__(self, inputfile):
         self.file = open(inputfile, "r")
         self.input_lines = self.file.read().split("\n")
+        self.file.close()
 
     # A function that handles the assembly of all the code.
     def assemble(self):
@@ -30,7 +31,14 @@ class Parser():
 
     # This function saves the assembled file to the outputfile path.
     def saveFile(self, outputfile):
-        pass
+        try:
+            os.remove(outputfile)
+        except OSError:
+            pass
+        self.outputfile = open(outputfile, 'w')
+        self.outputfile.write("\n".join(self.mntdw_lines))
+        self.outputfile.close()
+
 
     def __remove_whitespace(self):
         for index, line in enumerate(self.input_lines):

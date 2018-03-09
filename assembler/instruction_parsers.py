@@ -108,7 +108,6 @@ def parseSetOnLessThanImmediate(instruction):
 
 
 def parseBranchNotEqual(instruction):
-    print(instruction)
     #bne $a0, $zero, start
     if not len(instruction['params']) == 3:
         raise SyntaxError("Three Parameters expected")
