@@ -1,6 +1,7 @@
 import sys, re, code
 
 from assembler.instruction_patterns import INSTRUCTION_PATTERNS
+from assembler.error import SyntaxError
 
 class Parser():
     """
@@ -9,7 +10,7 @@ class Parser():
     Class Variables:
         file
         input_lines - Every line of the input file
-        instruction_lines - Every instruction in the program.
+        instruction_lines - a tuple of every instruction and the original line index it was on.
         mntdw_lines - Compiled machine code
         labels - A dictionary of labels and their index in instruction_lines
     """
@@ -21,12 +22,13 @@ class Parser():
     def __init__(self, inputfile):
         self.file = open(inputfile, "r")
         self.input_lines = self.file.read().split("\n")
-        print(self.input_lines)
 
+    # A function that handles the assembly of all the code.
     def assemble(self):
         self.__remove_whitespace()
-        # self.__parse()
+        self.__parse()
 
+    # This function saves the assembled file to the outputfile path.
     def saveFile(self, outputfile):
         pass
 
@@ -48,18 +50,21 @@ class Parser():
                 continue
 
             # New line should be ready to do
-            self.instruction_lines.append(new_line)
+            self.instruction_lines.append((new_line, index))
 
     def __parse(self):
-        for index, line in enumerate(self.input_lines):
+        for index, instruction_tuple in enumerate(self.instruction_lines):
+            line = instruction_tuple[0]
             try:
                 assembled = self.__parseLine(line)
                 if assembled == None or assembled == "":
+                    # TODO: raise SyntaxError here
                     continue
                 self.mntdw_lines.append(assembled)
+
             except SyntaxError:
-                print("Syntax Error on line " + str(index + 1) + " (Snippet shown below)")
-                print(line)
+                print("Syntax Error on line " + str(instruction_tuple[1] + 1) + " (Snippet shown below)")
+                print(self.input_lines[instruction_tuple[1]])
                 sys.exit(0)
 
 
@@ -70,7 +75,3 @@ class Parser():
             if regex.match(instruction):
                 return pattern[1](instruction)
         raise SyntaxError
-
-
-class SyntaxError(Exception):
-    pass

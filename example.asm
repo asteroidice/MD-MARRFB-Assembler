@@ -1,6 +1,5 @@
   # setup initial values
 	li $t0, 0
-	sw $t0, count
 
 	# Multiply A ($t1) and B ($t2)
 	li $t1, 4

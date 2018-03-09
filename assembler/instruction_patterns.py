@@ -1,5 +1,7 @@
-from assembler.instruction_parsers import parseAdd, parseLoadImmediate, parseStoreWord
-
+from assembler.instruction_parsers import (parseAddImmediate, parseAdd,
+    parseLoadImmediate, parseBoothLoad, parseBoothAdd,
+    parseShiftRightArithmetic, parseShiftLogicalLeft, parseBranchNotEqual,
+    parseMove, parseSyscall)
 """
 Instruction Patterns are an array of tuples. Whose values are the following.
 
@@ -15,7 +17,14 @@ Instruction Parser:
     returns the machine code for that instruction.
 """
 INSTRUCTION_PATTERNS = [
+    ('addi', parseAddImmediate),
     ('add', parseAdd),
     ('li', parseLoadImmediate),
-    ('sw', parseStoreWord),
+    ('booth-load', parseBoothLoad),
+    ('booth-add', parseBoothAdd),
+    ('sra', parseShiftRightArithmetic),
+    ('slt', parseShiftLogicalLeft),
+    ('bne', parseBranchNotEqual),
+    ('move', parseMove),
+    ('syscall', parseSyscall),
 ]
