@@ -4,14 +4,13 @@ from assembler.error import SyntaxError
 from assembler.registers import REGISTERS
 from assembler.helpers import check_params
 
+
 def parseAdd(instruction):
-    if not len(instruction['params']) == 3:
-        raise SyntaxError("Three parameters expected.")
+    check_params(instruction, ('register', 'register', 'register'))
+
     p0 = instruction['params'][0]
     p1 = instruction['params'][1]
     p2 = instruction['params'][2]
-    if not p0 in REGISTERS or not p1 in REGISTERS or not p2 in REGISTERS:
-        raise SyntaxError("Invalid register")
 
     r0 = REGISTERS[p0]
     r1 = REGISTERS[p1]
@@ -22,12 +21,13 @@ def parseAdd(instruction):
     source_reg2 = format(r1, '05b')
     opcode = format(0x00, '06b')
     func_code = format(0x20, '06b')
-    shift = '00000' # 5 bits
+    shift = '00000'  # 5 bits
 
     return(opcode + source_reg2 + source_reg1 + dest_reg + shift + func_code)
 
 
 def parseLoadImmediate(instruction):
+    check_params(instruction, ("register", "number"))
     params = instruction['params']
     instruction_copy = copy.copy(instruction)
     instruction_copy['params'] = [params[0], '$zero', params[1]]
@@ -35,26 +35,21 @@ def parseLoadImmediate(instruction):
 
 
 def parseAddImmediate(instruction):
-    parts = instruction['params']
-    if not len(parts) == 3:
-        raise SyntaxError("Three parameters expected. " + str(len(parts)) + " found.")
-    if not parts[0] in REGISTERS or not parts[1] in REGISTERS:
-        raise SyntaxError("Register '" + parts[0] + "' not found.")
-    # TODO: Check to make sure number is not out of range.
-    try:
-        value = format(int(parts[2]), '016b')
-        source_reg = format(REGISTERS[parts[1]], '05b')
-        dest_reg = format(REGISTERS[parts[0]], '05b')
-        opcode = format(0x08, '06b')
-        return(opcode + source_reg + dest_reg + value)
-    except:
-        raise SyntaxError
+    check_params(instruction, ("register", "register", "number"))
+    params = instruction['params']
+
+    value = format(int(params[2]), '016b')
+    source_reg = format(REGISTERS[params[1]], '05b')
+    dest_reg = format(REGISTERS[params[0]], '05b')
+    opcode = format(0x08, '06b')
+    return(opcode + source_reg + dest_reg + value)
 
 
 def parseBoothAdd(instruction):
     check_params(instruction, ())
 
     return(format(0x09, '032b'))
+
 
 def parseBoothLoad(instruction):
     check_params(instruction, ("register", "register"))
@@ -76,20 +71,16 @@ def parseBoothLoad(instruction):
 
 
 def parseShiftRightArithmetic(instruction):
-    if not len(instruction['params']) == 3:
-        raise SyntaxError("Three parameters expected.")
+    check_params(instruction, ("register", "register", "number"))
+
     p0 = instruction['params'][0]
     p1 = instruction['params'][1]
     p2 = instruction['params'][2]
-    if not p0 in REGISTERS or not p1 in REGISTERS:
-        raise SyntaxError("Invalid register symbol.")
-    # TODO: Check to make sure number is not out of range.
+
     r0 = REGISTERS[p0]
     r1 = REGISTERS[p1]
-    try:
-        s = int(p2)
-    except:
-        raise SyntaxError("Invalid integer '" + str(p2) + "'.")
+
+    s = int(p2)
 
     opcode = format(0x00, '06b')
     dest_reg = format(r0, '05b')
@@ -103,20 +94,16 @@ def parseShiftRightArithmetic(instruction):
 
 def parseSetOnLessThanImmediate(instruction):
     # slti $a0, $t4, 16
-    if not len(instruction['params']) == 3:
-        raise SyntaxError("Three parameters expected.")
+    check_params(instruction, ("register", "register", "number"))
+
     p0 = instruction['params'][0]
     p1 = instruction['params'][1]
     p2 = instruction['params'][2]
-    if not p0 in REGISTERS or not p1 in REGISTERS:
-        raise SyntaxError("Invalid register symbol.")
-    # TODO: Check to make sure number is not out of range.
+
     r0 = REGISTERS[p0]
     r1 = REGISTERS[p1]
-    try:
-        s = int(p2)
-    except:
-        raise SyntaxError("Invalid integer '" + str(p2) + "'.")
+
+    s = int(p2)
 
     opcode = format(0x0A, '06b')
     reg_target = format(r0, '05b')
@@ -127,16 +114,12 @@ def parseSetOnLessThanImmediate(instruction):
 
 
 def parseBranchNotEqual(instruction):
-    #bne $a0, $zero, start
-    if not len(instruction['params']) == 3:
-        raise SyntaxError("Three Parameters expected")
+    # bne $a0, $zero, start
+    check_params(instruction, ("register", "register", "label"))
+
     p0 = instruction['params'][0]
     p1 = instruction['params'][1]
     p2 = instruction['params'][2]
-    if not p0 in REGISTERS or not p1 in REGISTERS:
-        raise SyntaxError("Invalid register symbol.")
-    if not p2 in instruction['labels']:
-        raise SyntaxError("Could not find label '" +  str(p2) + "'.")
 
     r0 = REGISTERS[p0]
     r1 = REGISTERS[p1]
@@ -146,7 +129,7 @@ def parseBranchNotEqual(instruction):
     opcode = format(0x05, '06b')
     target_reg = format(r0, '05b')
     source_reg = format(r1, '05b')
-    IMM = format(label_addr, '016b') # TODO: Implement indirect addressing.
+    IMM = format(label_addr, '016b')  # TODO: Implement indirect addressing.
 
     return(opcode + source_reg + target_reg + IMM)
 
@@ -154,17 +137,12 @@ def parseBranchNotEqual(instruction):
 def parseMove(instruction):
     # move $1, $2 -> add $1, $2, $0
     check_params(instruction, ("register", "register"))
-    # if not len(instruction['params']) == 2:
-    #     raise SyntaxError("Two Parameters expected")
-    # p0 = instruction['params'][0]
-    # p1 = instruction['params'][1]
-    # if not p0 in REGISTERS or not p1 in REGISTERS:
-    #     raise SyntaxError("Invalid register symbol.")
 
     params = instruction['params']
     instruction_copy = copy.copy(instruction)
     instruction['params'] = [params[0], params[1], '$zero']
     return parseAdd(instruction)
+
 
 def parseSyscall(instruction):
     check_params(instruction, ())
