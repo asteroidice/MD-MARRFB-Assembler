@@ -2,7 +2,7 @@ import copy
 
 from assembler.error import SyntaxError
 from assembler.registers import REGISTERS
-from assembler.helpers import check_params
+from assembler.helpers import check_params, to_bin_string
 
 
 def parseAdd(instruction):
@@ -16,11 +16,11 @@ def parseAdd(instruction):
     r1 = REGISTERS[p1]
     r2 = REGISTERS[p2]
 
-    dest_reg = format(r1, '05b')
-    source_reg1 = format(r1, '05b')
-    source_reg2 = format(r1, '05b')
-    opcode = format(0x00, '06b')
-    func_code = format(0x20, '06b')
+    dest_reg = to_bin_string(r0, 5)
+    source_reg1 = to_bin_string(r1, 5)
+    source_reg2 = to_bin_string(r2, 5)
+    opcode = to_bin_string(0x00, 6)
+    func_code = to_bin_string(0x20, 6)
     shift = '00000'  # 5 bits
 
     return(opcode + source_reg2 + source_reg1 + dest_reg + shift + func_code)
@@ -38,17 +38,17 @@ def parseAddImmediate(instruction):
     check_params(instruction, ("register", "register", "number"))
     params = instruction['params']
 
-    value = format(int(params[2]), '016b')
-    source_reg = format(REGISTERS[params[1]], '05b')
-    dest_reg = format(REGISTERS[params[0]], '05b')
-    opcode = format(0x08, '06b')
+    value = to_bin_string(int(params[2]), 16, True)
+    source_reg = to_bin_string(REGISTERS[params[1]], 5)
+    dest_reg = to_bin_string(REGISTERS[params[0]], 5)
+    opcode = to_bin_string(0x08, 6)
     return(opcode + source_reg + dest_reg + value)
 
 
 def parseBoothAdd(instruction):
     check_params(instruction, ())
 
-    return(format(0x09, '032b'))
+    return(to_bin_string(0x09, 32))
 
 
 def parseBoothLoad(instruction):
@@ -61,9 +61,9 @@ def parseBoothLoad(instruction):
     b_reg = REGISTERS[b_param]
 
     opcode = "000000"
-    func_code = format(0x04, '06b')
-    source_reg = format(a_reg, '05b')
-    target_reg = format(b_reg, '05b')
+    func_code = to_bin_string(0x04, 6)
+    source_reg = to_bin_string(a_reg, 5)
+    target_reg = to_bin_string(b_reg, 5)
     shift = "00000"
     dest_reg = "00000"
 
@@ -82,12 +82,12 @@ def parseShiftRightArithmetic(instruction):
 
     s = int(p2)
 
-    opcode = format(0x00, '06b')
-    dest_reg = format(r0, '05b')
-    source_reg = format(r1, '05b')
+    opcode = to_bin_string(0x00, 6)
+    dest_reg = to_bin_string(r0, 5)
+    source_reg = to_bin_string(r1, 5)
     target_reg = "00000"
-    shift = format(s, '05b')
-    func_code = format(0x03, '06b')
+    shift = to_bin_string(s, 5)
+    func_code = to_bin_string(0x03, 6)
 
     return(opcode + source_reg + target_reg + dest_reg + shift + func_code)
 
@@ -105,10 +105,10 @@ def parseSetOnLessThanImmediate(instruction):
 
     s = int(p2)
 
-    opcode = format(0x0A, '06b')
-    reg_target = format(r0, '05b')
-    reg_source = format(r1, '05b')
-    IMM = format(s, '016b')
+    opcode = to_bin_string(0x0A, 6)
+    reg_target = to_bin_string(r0, 5)
+    reg_source = to_bin_string(r1, 5)
+    IMM = to_bin_string(s, 16, True)
 
     return(opcode + reg_source + reg_target + IMM)
 
@@ -126,10 +126,10 @@ def parseBranchNotEqual(instruction):
 
     label_addr = instruction['labels'][p2]
 
-    opcode = format(0x05, '06b')
-    target_reg = format(r0, '05b')
-    source_reg = format(r1, '05b')
-    IMM = format(label_addr, '016b')  # TODO: Implement indirect addressing.
+    opcode = to_bin_string(0x05, 6)
+    target_reg = to_bin_string(r0, 5)
+    source_reg = to_bin_string(r1, 5)
+    IMM = to_bin_string(label_addr, 16)  # TODO: Implement indirect addressing.
 
     return(opcode + source_reg + target_reg + IMM)
 
@@ -140,11 +140,11 @@ def parseMove(instruction):
 
     params = instruction['params']
     instruction_copy = copy.copy(instruction)
-    instruction['params'] = [params[0], params[1], '$zero']
-    return parseAdd(instruction)
+    instruction_copy['params'] = [params[0], params[1], '$zero']
+    return parseAdd(instruction_copy)
 
 
 def parseSyscall(instruction):
     check_params(instruction, ())
 
-    return(format(0xC, "032b"))
+    return(to_bin_string(0xC, 32))
