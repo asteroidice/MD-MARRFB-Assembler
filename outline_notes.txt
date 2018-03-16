@@ -1,0 +1,51 @@
+Draft Outline
+1.	Intro
+2.	Instruction Objectives + Opcode Objectives
+3.	Assembler Objectives
+4.	Radix-Four Booth’s Algorithm (Theory)
+5.	Radix-Four Booth’s Algorithm (Example)
+6.	Instruction Set Design
+7.	Pre-existing Instructions
+8.	More Instruction Set Design
+9.	Datapath design
+10.	More datapath design
+
+
+
+Process Notes
+----------------
+-	Look at example assembly code
+x	Assignment for Booth add
+x	Adapted for our instruction set
+x	Looked at instruction to code mapping
+x	Research MIPS format
+x	How was that format determined, how to add to it
+x	Op codes/function codes
+
+-	Parsing rules
+x	Read in a file (every line) in a for loop
+x	What can we ignore?
+x	Comments/white space
+x	How to specify labels
+x	Start of line; colon
+
+o	What’s left now? Lines of instruction code and parameters
+x	We want to convert these parts to instruction code through above process
+x	We want this process to be extendable, so we can easily add new instructions. This rules out switch statements and if statements.
+
+o	Instruction Patterns
+	Tuples with function code string and instruction parser function
+	Lines of strings are read in, parameters, file line (Human readable) and address (machine readable) are saved
+
+o	Instruction Parsers
+	Function for each instruction
+	Started with dummy functions
+	Called from instruction pattern match
+	Given parameter string
+	Has helper functions that throw syntax errors
+	Converts to machine code, returns to main function for printing
+o	Syntax Errors
+	Universal syntax error “object”
+	Error is printed to console, with details (line, type, offending code snippet)
+o	Register definition
+	File with all register info, for translating to addresses/etc
