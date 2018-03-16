@@ -29,7 +29,7 @@ To develop a deeper understanding of processor design and other computer archite
 * Implement simple hazard detection with warnings when assembling instructions that could lead to stalls or control hazards
 
 # Assembler Documentation
-This section discusses how to use the assembler and how it can configured for custom assembly instructions.
+This section discusses how to use the assembler and how it can be configured for custom assembly instructions.
 
 ## Assembling a program
 To assemble a program run the following command. (The `-i` option can also be set to specify an input file as well.)
